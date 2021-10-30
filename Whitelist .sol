@@ -16,7 +16,7 @@ contract Whitelist is Ownable {
         _;
     }
 
-    function getAdmin() public onlyOwner view returns (address[] memory){
+    function getAdmin() public view returns (address[] memory){
         return adminList;
     }
 
