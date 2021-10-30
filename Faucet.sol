@@ -1,11 +1,11 @@
 pragma solidity ^0.5.17;
 
-import "./openzeppelin/Ownable.sol";
+import "./Whitelist.sol";
 import "./openzeppelin/SafeMath.sol";
 import "./openzeppelin/SafeERC20.sol";
 import "./interfaces/IERC20.sol";
 
-contract Faucet is Ownable {
+contract Faucet is Whitelist {
 
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
@@ -31,5 +31,5 @@ contract Faucet is Ownable {
         require(_address != address(0), "recipient address cound not be 0x0");
         _;
     }
-    
+
 }
