@@ -31,5 +31,18 @@ contract Faucet is Whitelist {
         require(_address != address(0), "recipient address cound not be 0x0");
         _;
     }
-
+    
+    function allowedToWithdraw(address _address, string memory _tokenSymbol) public view returns (bool) {
+        if(lastAccessTime[_address][_tokenSymbol] == 0) {
+            return true;
+        } else if(block.timestamp >= lastAccessTime[_address][_tokenSymbol]) {
+            return true;
+        }
+        return false;
+    }
+    
+    function updateTokenAmount(uint256 _tokenAmount) private onlyAdmin{
+        tokenAmount = _tokenAmount;
+    }
+    
 }
