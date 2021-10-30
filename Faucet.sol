@@ -31,6 +31,24 @@ contract Faucet is Whitelist {
         require(_address != address(0), "recipient address cound not be 0x0");
         _;
     }
+            
+    function setBUSDAddress(address _busdAddr) public onlyOwner avoidZeroAddress(_busdAddr){
+        busd = IERC20(_busdAddr);
+    }
+    
+    function getBUSDBalance() public view returns (uint256){
+        return busd.balanceOf(address(this));
+    }
+    
+    function faucetSendBUSD(address payable _to) public avoidZeroAddress(_to) payable{
+        require(allowedToWithdraw(msg.sender,'busd'));
+        require(getBUSDBalance() >= tokenAmount,"BUSD balances are not enough!!");
+        
+        busd.safeTransfer(_to, tokenAmount.mul(WEI_PRECISION));
+        lastAccessTime[msg.sender]['busd'] = block.timestamp + waitTime;
+
+        emit FaucetTransfer(_to, tokenAmount, block.timestamp);
+    }
     
     function allowedToWithdraw(address _address, string memory _tokenSymbol) public view returns (bool) {
         if(lastAccessTime[_address][_tokenSymbol] == 0) {
