@@ -14,8 +14,8 @@ contract Faucet is Whitelist {
     uint256 private waitTime;
     uint256 internal constant WEI_PRECISION = 10**18;
     
-    IERC20 public usdt;
-    IERC20 public busd; 
+    IERC20 private _usdt;
+    IERC20 private _busd; 
 
     constructor() public {
         tokenAmount = 1000;
@@ -32,7 +32,7 @@ contract Faucet is Whitelist {
         _;
     }
     
-    function allowedToWithdraw(address _address, string memory _tokenSymbol) public view returns (bool) {
+    function allowedToWithdraw(address _address, string memory _tokenSymbol) internal view returns (bool) {
         if(lastAccessTime[_address][_tokenSymbol] == 0) {
             return true;
         } else if(block.timestamp >= lastAccessTime[_address][_tokenSymbol]) {
