@@ -41,8 +41,12 @@ contract Faucet is Whitelist {
     } else if (block.timestamp >= lastAccessTime[_address][_tokenSymbol]) {
       return true;
     }
-    return false;
-  }
+        return false;
+   }
+    
+    function updateTokenAmount(uint256 _tokenAmount) private onlyAdmin{
+        tokenAmount = _tokenAmount;
+    }
 
   function setUsdtAddress(address _address)
     public
