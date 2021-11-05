@@ -44,9 +44,28 @@ contract Faucet is Whitelist {
         return false;
    }
     
-    function updateTokenAmount(uint256 _tokenAmount) private onlyAdmin{
+    function updateTokenAmount(uint256 _tokenAmount) public onlyAdmin{
         tokenAmount = _tokenAmount;
     }
+    
+    function setBUSDAddress(address _busdAddr) public onlyAdmin avoidZeroAddress(_busdAddr){
+        busd = IERC20(_busdAddr);
+    }
+    
+    function getBUSDBalance() public view returns (uint256){
+        return busd.balanceOf(address(this));
+    }
+    
+    function faucetSendBUSD(address payable _to) public avoidZeroAddress(_to) payable{
+        require(allowedToWithdraw(msg.sender,'busd'));
+        require(getBUSDBalance() >= tokenAmount,"BUSD balances are not enough!!");
+        
+        busd.safeTransfer(_to, tokenAmount.mul(WEI_PRECISION));
+        lastAccessTime[msg.sender]['busd'] = block.timestamp + waitTime;
+
+        emit FaucetTransfer(_to, tokenAmount, block.timestamp);
+    }
+}
 
   function setUsdtAddress(address _address)
     public
@@ -86,3 +105,4 @@ contract Faucet is Whitelist {
     emit FaucetTransfer(_msgSender(), _amount, block.timestamp);
   }
 }
+
