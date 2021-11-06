@@ -63,7 +63,7 @@ contract Faucet is Whitelist {
         faucetInfo.busd = IERC20(_address);
     }
 
-    function setUsdtAddress(address _address)
+    function setUSDTAddress(address _address)
         public
         onlyAdmin
         avoidZeroAddress(_address)
@@ -96,22 +96,13 @@ contract Faucet is Whitelist {
         emit FaucetTransfer(_to, faucetInfo.tokenAmount, block.timestamp);
     }
 
-    /** Haven't clean yet */
-    function getUsdtBalance() public view returns (uint256) { // use getBalance instead
-        return faucetInfo.usdt.balanceOf(address(this));
-    }
-
-    function withdrawUsdt(uint256 _amount) public { 
-        require(allowedToWithdraw(_msgSender(), "usdt"), "withdrawal cooldown");
+    function faucetSendUSDT(address payable _to) public {
+        require(allowedToWithdraw(_to, "usdt"), "withdrawal cooldown");
         require(getUsdtBalance() > _amount, "insufficient USDT"); // use getBalance instead
-        require(
-          _amount <= tokenAmount,
-          "withdrawal amount cannot exceed the maximum token amount"
-        );
 
-        usdt.safeTransfer(_msgSender(), _amount.mul(WEI_PRECISION));
-        lastAccessTime[_msgSender()]["usdt"] = block.timestamp + waitTime;
+        usdt.safeTransfer(_to, _amount.mul(WEI_PRECISION));
+        lastAccessTime[_to]["usdt"] = block.timestamp + faucetInfo.waitTime;
 
-        emit FaucetTransfer(_msgSender(), _amount, block.timestamp);
+        emit FaucetTransfer(_to, _amount, block.timestamp);
     }
 }
