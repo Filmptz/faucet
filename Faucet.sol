@@ -21,7 +21,7 @@ contract Faucet is Whitelist {
 
     constructor() public {
         faucetInfo.tokenAmount = 1000;
-        faucetInfo.waitTime = 1 minutes;
+        faucetInfo.waitTime = 60 minutes;
     }
 
     event FaucetTransfer(address _to, uint256 value, uint256 timestamp);
