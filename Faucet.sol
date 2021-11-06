@@ -85,7 +85,7 @@ contract Faucet is Whitelist {
     {
         (uint256 usdtBalance, uint256 busdBalance) = getBalance();
         require(allowedToWithdraw(_to, "busd"), "withdrawal cooldown");
-        require(busdBalance > faucetInfo.tokenAmount, "insufficient USDT");
+        require(busdBalance > faucetInfo.tokenAmount, "insufficient BUSD");
 
         faucetInfo.busd.safeTransfer(
             _to,
