@@ -85,7 +85,7 @@ contract Faucet is Whitelist {
     {
         (uint256 usdtBalance, uint256 busdBalance) = getBalance();
         require(allowedToWithdraw(_to, "busd"), "withdrawal cooldown");
-        require(busdBalance >= faucetInfo.tokenAmount, "insufficient USDT");
+        require(busdBalance > faucetInfo.tokenAmount, "insufficient USDT");
 
         faucetInfo.busd.safeTransfer(
             _to,
@@ -96,13 +96,21 @@ contract Faucet is Whitelist {
         emit FaucetTransfer(_to, faucetInfo.tokenAmount, block.timestamp);
     }
 
-    function faucetSendUSDT(address payable _to) public {
+    function faucetSendUSDT(address payable _to)
+        public
+        payable
+        avoidZeroAddress(_to)
+    {
+        (uint256 usdtBalance, uint256 busdBalance) = getBalance();
         require(allowedToWithdraw(_to, "usdt"), "withdrawal cooldown");
-        require(getUsdtBalance() > _amount, "insufficient USDT"); // use getBalance instead
+        require(usdtBalance > faucetInfo.tokenAmount, "insufficient USDT");
 
-        usdt.safeTransfer(_to, _amount.mul(WEI_PRECISION));
+        faucetInfo.usdt.safeTransfer(
+            _to,
+            (faucetInfo.tokenAmount).mul(WEI_PRECISION)
+        );
         lastAccessTime[_to]["usdt"] = block.timestamp + faucetInfo.waitTime;
 
-        emit FaucetTransfer(_to, _amount, block.timestamp);
+        emit FaucetTransfer(_to, faucetInfo.tokenAmount, block.timestamp);
     }
 }
